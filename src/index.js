@@ -32,6 +32,9 @@ const getData = async () => {
       const transactions = await yahoo.yfbb.getTransactions();
       console.log(`Getting a list of transactions...`);
 
+      const standings = await yahoo.yfbb.getStandings();
+      console.log(`Geting the standings...`);
+
       const allData = {
         "free agents": freeAgents,
         "my players": myPlayers,
@@ -40,6 +43,7 @@ const getData = async () => {
         "stat IDs": statsIDs,
         "current roster": currentRoster,
         transactions,
+        standings
       };
 
       const data = JSON.stringify(allData);

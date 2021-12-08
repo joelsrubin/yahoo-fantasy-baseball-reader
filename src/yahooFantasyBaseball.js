@@ -3,7 +3,7 @@ const qs = require("qs");
 const axios = require("axios");
 const parser = require("xml2json");
 const CONFIG = require("../config.json");
-
+console.log(CONFIG);
 exports.yfbb = {
   // Global credentials variable
   CREDENTIALS: null,
@@ -18,7 +18,7 @@ exports.yfbb = {
   // API endpoints
   YAHOO: `https://fantasysports.yahooapis.com/fantasy/v2`,
   gameKey() {
-    return `${this.YAHOO}/game/mlb`;
+    return `${this.YAHOO}/game/nfl`;
   },
   freeAgents(i) {
     const startNum = typeof i !== "number" || i < 0 || i > 20 ? 0 : i;
@@ -45,9 +45,15 @@ exports.yfbb = {
   statsID() {
     return `${this.YAHOO}/game/${CONFIG.LEAGUE_KEY.substr(0, 3)}/stat_categories`;
   },
+
+  standings() {
+    return `${this.YAHOO}/league/${CONFIG.LEAGUE_KEY}/standings`;
+  },
+
   roster() {
     return `${this.YAHOO}/team/${CONFIG.LEAGUE_KEY}.t.${CONFIG.TEAM}/roster/players`;
   },
+
 
   // Write to an external file to display output data
   writeToFile(data, file, flag) {
@@ -291,6 +297,17 @@ exports.yfbb = {
     try {
       const results = await this.makeAPIrequest(this.statsID());
       return results.fantasy_content.game.stat_categories.stats;
+    } catch (err) {
+      console.error(`Error in getStatsIDs(): ${err}`);
+      return err;
+    }
+  },
+
+  async getStandings() {
+    try {
+      const results = await this.makeAPIrequest(this.standings());
+      console.log(results.fantasy_content.league.standings.teams.team);
+      return results.fantasy_content.league.standings.teams.team;
     } catch (err) {
       console.error(`Error in getStatsIDs(): ${err}`);
       return err;
