@@ -11,8 +11,8 @@ const getData = async () => {
       yahoo.yfbb.WEEK = await yahoo.yfbb.getCurrentWeek();
       console.log(`Getting current week...`);
 
-      const freeAgents = await yahoo.yfbb.getFreeAgents();
-      console.log(`Getting free agents...`);
+      // const freeAgents = await yahoo.yfbb.getFreeAgents();
+      // console.log(`Getting free agents...`);
 
       const myPlayers = await yahoo.yfbb.getMyPlayers();
       console.log(`Getting a list of my players...`);
@@ -20,11 +20,17 @@ const getData = async () => {
       const myPlayersStats = await yahoo.yfbb.getMyPlayersStats();
       console.log(`Getting my players' stats...`);
 
+      // const myMatchups = await yahoo.yfbb.getMyMatchups();
+      // console.log(`Getting my matchups ...`);
+
       const myScoreboard = await yahoo.yfbb.getMyScoreboard();
       console.log(`Getting the scoreboard...`);
 
       const statsIDs = await yahoo.yfbb.getStatsIDs();
       console.log(`Getting the ID mapping of the stats...`);
+
+      const allPlayers = await yahoo.yfbb.getAllPlayers();
+      console.log(`Getting all players`);
 
       const currentRoster = await yahoo.yfbb.getCurrentRoster();
       console.log(`Getting my current roster...`);
@@ -36,14 +42,15 @@ const getData = async () => {
       console.log(`Geting the standings...`);
 
       const allData = {
-        "free agents": freeAgents,
+        // "free agents": freeAgents,
         "my players": myPlayers,
         "my players' stats": myPlayersStats,
         "my scoreboard": myScoreboard,
         "stat IDs": statsIDs,
         "current roster": currentRoster,
         transactions,
-        standings
+        standings,
+        allPlayers,
       };
 
       const data = JSON.stringify(allData);

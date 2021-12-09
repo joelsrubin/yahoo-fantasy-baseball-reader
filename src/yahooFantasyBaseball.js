@@ -3,7 +3,7 @@ const qs = require("qs");
 const axios = require("axios");
 const parser = require("xml2json");
 const CONFIG = require("../config.json");
-console.log(CONFIG);
+
 exports.yfbb = {
   // Global credentials variable
   CREDENTIALS: null,
@@ -27,9 +27,13 @@ exports.yfbb = {
   myTeam() {
     return `${this.YAHOO}/team/${CONFIG.LEAGUE_KEY}.t.${CONFIG.TEAM}/roster/`;
   },
+  allTeams(num) {
+    return `${this.YAHOO}/team/${CONFIG.LEAGUE_KEY}.t.${num}/roster/`;
+  },
   myWeeklyStats() {
     return `${this.YAHOO}/team/${CONFIG.LEAGUE_KEY}.t.${CONFIG.TEAM}/stats;type=week;week=${this.WEEK}`;
   },
+
   scoreboard() {
     return `${this.YAHOO}/league/${CONFIG.LEAGUE_KEY}/scoreboard;week=${this.WEEK}`;
   },
@@ -53,7 +57,6 @@ exports.yfbb = {
   roster() {
     return `${this.YAHOO}/team/${CONFIG.LEAGUE_KEY}.t.${CONFIG.TEAM}/roster/players`;
   },
-
 
   // Write to an external file to display output data
   writeToFile(data, file, flag) {
@@ -200,6 +203,29 @@ exports.yfbb = {
     }
   },
 
+  //  Get a list of all players
+  async getAllPlayers() {
+    try {
+      const promises = [];
+      for (let i = 1; i < 13; i++) {
+        const reqUrl = this.allTeams(i);
+        promises.push(this.makeAPIrequest(reqUrl));
+      }
+      const completedPromises = await Promise.all(promises);
+
+      const results = [];
+      completedPromises.forEach((result) => {
+        if (result.fantasy_content && result.fantasy_content.team) {
+          results.push(result.fantasy_content.team);
+        }
+      });
+      return results;
+    } catch (err) {
+      console.error(`Error in getAllPlayers(): ${err}`);
+      return err;
+    }
+  },
+
   // Get my weekly stats
   async getMyWeeklyStats() {
     try {
@@ -306,7 +332,6 @@ exports.yfbb = {
   async getStandings() {
     try {
       const results = await this.makeAPIrequest(this.standings());
-      console.log(results.fantasy_content.league.standings.teams.team);
       return results.fantasy_content.league.standings.teams.team;
     } catch (err) {
       console.error(`Error in getStatsIDs(): ${err}`);
